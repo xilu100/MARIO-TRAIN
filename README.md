@@ -43,6 +43,12 @@ URL:https://www.anaconda.com/download/success
    ```shell
    conda init powershell
    ```
+
+6. Restart the terminal.  
+   Execute the version check.
+   ```shell
+   conda --version
+   ```
    If you encounter issues similar to the ones listed below, please refer to the following link.
    (Occurs in PowerShell version 7.5.0 and above.)
    ```shell
@@ -50,8 +56,11 @@ URL:https://www.anaconda.com/download/success
    conda-script.py: error: argument COMMAND: invalid choice: ''(choose from activate, clean, commands, compare, config, create, deactivate, env, 
    export, info, init, install, list, notices, package, content-trust, doctor, repoquery, remove, uninstall, rename, run, search, update, upgrade)
    ```
-   Solution:https://github.com/conda/conda/issues/14537
-6. Restart the terminal.
+   Solution:https://github.com/conda/conda/issues/14537  
+   The correct output should be similar to:  
+   ```shell 
+   conda 24.11.3
+   ```
 7. If all goes well, it should be in this format:  
    `(base) PS PATH\PATH\PATH>`
 8. Create a Conda environment based on Python 3.8.8.
