@@ -1,0 +1,14 @@
+gym==0.21.0
+gym-super-mario-bros==7.3.0
+
+tensorboard
+six
+protobuf==3.20.3
+icecream
+imageio
+opencv-python #In some cases, it might simply be called opencv.
+nes_py==8.2.1
+numpy==1.24.4
+
+shimmy>=2.0
+stable_baselines3==1.6.0
