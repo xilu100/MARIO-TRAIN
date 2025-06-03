@@ -71,9 +71,13 @@ URL:https://www.anaconda.com/download/success
    Here, we will use "mario" consistently.)
 9. If all goes well, it should be in this format:  
    Input:  
-   `conda activate mario`  
+   ```shell
+   conda activate mario
+   ```  
    Output:  
-   `(mario) PS PATH\PATH\PATH>`
+   ```shell
+   (mario) PS PATH\PATH\PATH>
+   ```
 10. It is recommended to perform all the following operations within this environment;
     otherwise, compatibility issues may occur.
 
