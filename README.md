@@ -3,7 +3,7 @@
 This is a project for research on Super-Mario-Bros reinforcement learning.  
 The purpose and research focus of this project is on RL (`Reinforcement Learning`) for completing levels in
 Super Mario (tentative).  
-Using `NVIDIA` GPUs for minimal training/testing, with `Intel ARC` GPUs as the primary training setup.
+Using `NVIDIA` GPUs for minimal training/testing, with `Intel ARC` GPUs as the primary training setup.  
 The project(temporary) originates from this author. Thanks to the author for open-sourcing it.     
 URL:https://github.com/Kautenja/gym-super-mario-bros  
 The environment setup for this project(temporary) is based on the quick setup guide provided by the author below. Thanks
