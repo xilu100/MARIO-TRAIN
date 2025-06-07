@@ -57,7 +57,7 @@ URL:https://www.anaconda.com/download/success
    export, info, init, install, list, notices, package, content-trust, doctor, repoquery, remove, uninstall, rename, run, search, update, upgrade)
    ```
    Solution:https://github.com/conda/conda/issues/14537  
-   The correct output should be similar to:  
+   The correct output should be similar to:
    ```shell 
    conda 24.11.3
    ```
@@ -70,11 +70,11 @@ URL:https://www.anaconda.com/download/success
    (The environment name after `-n` can be anything you like, as long as you can remember it.
    Here, we will use "mario" consistently.)
 9. If all goes well, it should be in this format:  
-   Input:  
+   Input:
    ```shell
    conda activate mario
    ```  
-   Output:  
+   Output:
    ```shell
    (mario) PS PATH\PATH\PATH>
    ```
@@ -255,16 +255,233 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
    ```
    (If `requirements.txt` is not in the current folder, please enter the full path.Exp:
    `pip install -r PATH/PATH/requirements.txt`)
-    - [Python configuration file](requirements.txt)
+    - [requirements.txt](requirements.txt)
 3. If no errors are reported, the pip dependencies have been successfully configured.
 4. This is only a temporary environment configuration for an early version; `Gym` has now migrated to `Gymnasium`.  
    So, if you encounter any compatibility issues, try Googling or, with a bit of luck, try changing the version numbers.
 
+---
+The following section focuses on project implementation, leaning towards a log-style format.
+
 ## Test whether the Mario based on NES can run.
 
+### June,05, 2025: Successfully configured the environment and ran the test program successfully.
+
+- [test_run_mario.py](NVIDIA/test_run_mario.py)
+
+### June,07, 2025: Prior knowledge required: Q-Learning, DQN (Deep Q-Network),A3C (Asynchronous Advantage Actor-Critic) , and PPO (Proximal Policy Optimization).
+
+#### From Q-Learning To DQN (Deep Q-Network)
+
+Worth exploring in depth.
+
+#### A3C (Asynchronous Advantage Actor-Critic)
+
+Worth exploring in depth.
+
+#### PPO (Proximal Policy Optimization)
+
+Worth exploring in depth.  
+This project will temporarily focus on studying PPO.  
+Reference URL(s):  
+https://en.wikipedia.org/wiki/Proximal_policy_optimization  
+https://stable-baselines3.readthedocs.io/en/master/modules/ppo.html
+
+##### History(The history and development process are crucial.)
+
+The predecessor to PPO, Trust Region Policy Optimization (TRPO), was published in 2015.
+It addressed the instability issue of another algorithm, the Deep Q-Network (DQN), by using the trust region method
+to limit the KL divergence between the old and new policies.
+However, TRPO uses the Hessian matrix (a matrix of second derivatives) to enforce the trust region,
+but the Hessian is inefficient for large-scale problems.
+
+##### Algorithm Overview
+
+Math:  
+Worth exploring in depth.  
+Code(Simple Invocation):  
+Fictional Example:
+
 ```python
-pass
+import gym_super_mario_bros
+from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
+from nes_py.wrappers import JoypadSpace
+from stable_baselines3.common.atari_wrappers import AtariWrapper
+
+env = gym_super_mario_bros.make('SuperMarioBros-v0')
+env = JoypadSpace(env, SIMPLE_MOVEMENT)
+env = AtariWrapper(env)
 ```
 
-   
+```python
+from stable_baselines3 import PPO
 
+model = PPO("CnnPolicy", env, verbose=1, n_steps=256, batch_size=64, n_epochs=4, learning_rate=2.5e-4, gamma=0.99)
+
+model.learn(total_timesteps=1000000)
+
+model.save("ppo_mario")
+```
+
+Code(Actual Implementation):  
+AI-generated content; rigorous analysis will not be conducted for now—this section is for placeholder purposes only.
+
+```python
+import gym
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.distributions import Categorical
+
+GAMMA = 0.99
+EPS_CLIP = 0.2
+LR = 3e-4
+K_EPOCHS = 4
+BATCH_SIZE = 64
+
+
+class ActorCritic(nn.Module):
+    def __init__(self, state_dim, action_dim):
+        super().__init__()
+        self.fc = nn.Sequential(
+            nn.Linear(state_dim, 64),
+            nn.Tanh(),
+        )
+        self.actor = nn.Linear(64, action_dim)
+        self.critic = nn.Linear(64, 1)
+
+    def forward(self, x):
+        x = self.fc(x)
+        return self.actor(x), self.critic(x)
+
+    def act(self, state):
+        logits, _ = self.forward(state)
+        dist = Categorical(logits=logits)
+        action = dist.sample()
+        return action.item(), dist.log_prob(action)
+
+    def evaluate(self, state, action):
+        logits, value = self.forward(state)
+        dist = Categorical(logits=logits)
+        action_logprobs = dist.log_prob(action)
+        dist_entropy = dist.entropy()
+        return action_logprobs, torch.squeeze(value), dist_entropy
+
+
+def collect_trajectories(env, policy, batch_size):
+    states = []
+    actions = []
+    rewards = []
+    dones = []
+    logprobs = []
+
+    state = env.reset()
+    for _ in range(batch_size):
+        state_tensor = torch.FloatTensor(state).unsqueeze(0)
+        action, logprob = policy.act(state_tensor)
+        next_state, reward, done, _ = env.step(action)
+
+        states.append(state)
+        actions.append(action)
+        rewards.append(reward)
+        dones.append(done)
+        logprobs.append(logprob.detach())
+
+        state = next_state if not done else env.reset()
+    return states, actions, rewards, dones, logprobs
+
+
+def compute_returns_advantages(rewards, dones, values, gamma=GAMMA):
+    returns = []
+    discounted_sum = 0
+    for reward, done in zip(reversed(rewards), reversed(dones)):
+        if done:
+            discounted_sum = 0
+        discounted_sum = reward + gamma * discounted_sum
+        returns.insert(0, discounted_sum)
+    returns = torch.tensor(returns, dtype=torch.float32)
+    advantages = returns - values.detach()
+    return returns, advantages
+
+
+def ppo_update(policy, optimizer, states, actions, old_logprobs, returns, advantages):
+    states = torch.FloatTensor(states)
+    actions = torch.LongTensor(actions)
+    old_logprobs = torch.stack(old_logprobs)
+    returns = returns.detach()
+    advantages = advantages.detach()
+    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)  # 标准化优势
+
+    for _ in range(K_EPOCHS):
+        # 这里简化用全部batch更新，实际中一般用minibatch随机梯度
+        logprobs, state_values, dist_entropy = policy.evaluate(states, actions)
+
+        ratios = torch.exp(logprobs - old_logprobs)
+        surr1 = ratios * advantages
+        surr2 = torch.clamp(ratios, 1 - EPS_CLIP, 1 + EPS_CLIP) * advantages
+        loss = -torch.min(surr1, surr2).mean() + 0.5 * (returns - state_values).pow(
+            2).mean() - 0.01 * dist_entropy.mean()
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+
+def main():
+    env = gym.make('CartPole-v1')
+    state_dim = env.observation_space.shape[0]
+    action_dim = env.action_space.n
+
+    policy = ActorCritic(state_dim, action_dim)
+    optimizer = optim.Adam(policy.parameters(), lr=LR)
+
+    max_training_steps = 10000
+    batch_size = 2048
+    print_interval = 1000
+
+    timestep = 0
+    while timestep < max_training_steps:
+        states, actions, rewards, dones, old_logprobs = collect_trajectories(env, policy, batch_size)
+
+        with torch.no_grad():
+            state_tensor = torch.FloatTensor(states)
+            _, values = policy.forward(state_tensor)
+            values = values.squeeze()
+
+        returns, advantages = compute_returns_advantages(rewards, dones, values)
+
+        ppo_update(policy, optimizer, states, actions, old_logprobs, returns, advantages)
+
+        timestep += batch_size
+
+        if timestep % print_interval == 0:
+            total_reward = sum(rewards) / batch_size
+            print(f"Step: {timestep} Avg Reward: {total_reward:.2f}")
+
+
+if __name__ == "__main__":
+    main()
+
+```
+### June,07, 2025: Noticing Mario’s actions.
+While studying the code , I noticed that the original author added `wrappers` for three types of Mario’s `actions`.
+```python
+env = gym_super_mario_bros.make('SuperMarioBros-v0')
+env = JoypadSpace(env, SIMPLE_MOVEMENT)
+```
+- [actions_ex.py](Referenced%20file/actions_ex.py)  
+Actual path:(YOUR ENV PATH)\mario\Lib\site-packages\gym_super_mario_bros\actions.py
+
+The original author divided them into three types: `RIGHT_ONLY`, `SIMPLE_MOVEMENT`, and `COMPLEX_MOVEMENT`, respectively.  
+### June,07-XX, 2025: Noticed the operating mechanism.
+```python
+done = True
+for step in range(5000):
+    if done:
+        state = env.reset()
+    state, reward, done, info = env.step(env.action_space.sample())
+    env.render()# Render into image(s).
+
+env.close()# Close the entire environment.
+
+```
