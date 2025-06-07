@@ -5,7 +5,11 @@
       <paths name="lxz@192.168.178.57:22 password">
         <serverdata>
           <mappings>
+<<<<<<< HEAD
             <mapping deploy="/tmp/pycharm_project_81" local="$PROJECT_DIR$" />
+=======
+            <mapping deploy="/tmp/pycharm_project_53" local="$PROJECT_DIR$" />
+>>>>>>> 18459301155b2ef8363822a337934d0fb0f86425
           </mappings>
         </serverdata>
       </paths>
