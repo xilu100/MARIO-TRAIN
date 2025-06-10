@@ -269,13 +269,9 @@ The following section focuses on project implementation, leaning towards a log-s
 
 - [test_run_mario.py](NVIDIA/test_run_mario.py)
 
-### June,07, 2025: Prior knowledge required: Q-Learning, DQN (Deep Q-Network),A3C (Asynchronous Advantage Actor-Critic) , and PPO (Proximal Policy Optimization).
+### June,07, 2025: Prior knowledge required: Q-Learning, DQN (Deep Q-Network) , and PPO (Proximal Policy Optimization).
 
 #### From Q-Learning To DQN (Deep Q-Network)
-
-Worth exploring in depth.
-
-#### A3C (Asynchronous Advantage Actor-Critic)
 
 Worth exploring in depth.
 
@@ -410,10 +406,9 @@ def ppo_update(policy, optimizer, states, actions, old_logprobs, returns, advant
     old_logprobs = torch.stack(old_logprobs)
     returns = returns.detach()
     advantages = advantages.detach()
-    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)  # 标准化优势
+    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8) 
 
     for _ in range(K_EPOCHS):
-        # 这里简化用全部batch更新，实际中一般用minibatch随机梯度
         logprobs, state_values, dist_entropy = policy.evaluate(states, actions)
 
         ratios = torch.exp(logprobs - old_logprobs)
@@ -463,25 +458,58 @@ if __name__ == "__main__":
     main()
 
 ```
+
 ### June,07, 2025: Noticing Mario’s actions.
+
 While studying the code , I noticed that the original author added `wrappers` for three types of Mario’s `actions`.
+
 ```python
 env = gym_super_mario_bros.make('SuperMarioBros-v0')
 env = JoypadSpace(env, SIMPLE_MOVEMENT)
 ```
+
 - [actions_ex.py](Referenced%20file/actions_ex.py)  
-Actual path:(YOUR ENV PATH)\mario\Lib\site-packages\gym_super_mario_bros\actions.py
+  Actual path:(YOUR ENV PATH)\mario\Lib\site-packages\gym_super_mario_bros\actions.py
 
-The original author divided them into three types: `RIGHT_ONLY`, `SIMPLE_MOVEMENT`, and `COMPLEX_MOVEMENT`, respectively.  
-### June,07-XX, 2025: Noticed the operating mechanism.
-```python
-done = True
-for step in range(5000):
-    if done:
-        state = env.reset()
-    state, reward, done, info = env.step(env.action_space.sample())
-    env.render()# Render into image(s).
+The original author divided them into three types: `RIGHT_ONLY`, `SIMPLE_MOVEMENT`, and `COMPLEX_MOVEMENT`,
+respectively.
 
-env.close()# Close the entire environment.
+### June,07-10, 2025: Noticed the operating mechanism.
+
+```python 
+done = True  # Whether the environment is ended
+for step in range(5000):  # Execute 5000 steps
+    if done:  # If it ends
+        state = env.reset()  # Environment Restart
+    state, reward, done, info = env.step(
+        env.action_space.sample())  # Returns four variables: status, reward, whether it is finished, and information
+    env.render()  # Render into image(s)
+
+env.close()  # Close the entire environment
 
 ```
+
+### June, 10, 2025: Test Run Stable Baselines3 v1.6.2
+
+```python
+import gym
+
+from stable_baselines3 import A2C
+
+env = gym.make("CartPole-v1")
+
+model = A2C("MlpPolicy", env, verbose=1)
+model.learn(total_timesteps=10_000)
+
+obs = env.reset()
+for i in range(1000):
+    action, _state = model.predict(obs, deterministic=True)
+    obs, reward, done, info = env.step(action)
+    env.render()
+    if done:
+        obs = env.reset()
+```
+
+Run successfully.
+
+### June,11,2025:
