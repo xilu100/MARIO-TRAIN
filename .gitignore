@@ -1,1 +1,80 @@
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# VSCode
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+
+# Node.js
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+
+# Java
+target/
+*.class
+
+# Ruby
+.bundle/
+vendor/bundle
+
+# PHP
+vendor/
+
+# Compiled files
+*.o
+*.out
+*.log
+
+# Build files
+dist/
+build/
+tmp/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Configuration files
+config.yml
+settings.json
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Cache
+*.log
+.cache/
+*.pid
+
+# Unit tests
+coverage/
+*.lcov
+
+# Temporary files
+*.tmp
+*.bak
