@@ -267,7 +267,7 @@ The following section focuses on project implementation, leaning towards a log-s
 
 ### June,05, 2025: Successfully configured the environment and ran the test program successfully.
 
-- [test_run_mario.py](NVIDIA/test_run_mario.py)
+- [test_run_mario.py](NVIDIA/TestEnv/test_run_mario.py)
 
 ### June,07, 2025: Prior knowledge required: Q-Learning, DQN (Deep Q-Network) , and PPO (Proximal Policy Optimization).
 
@@ -406,7 +406,7 @@ def ppo_update(policy, optimizer, states, actions, old_logprobs, returns, advant
     old_logprobs = torch.stack(old_logprobs)
     returns = returns.detach()
     advantages = advantages.detach()
-    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8) 
+    advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
 
     for _ in range(K_EPOCHS):
         logprobs, state_values, dist_entropy = policy.evaluate(states, actions)
@@ -512,4 +512,49 @@ for i in range(1000):
 
 Run successfully.
 
-### June,11,2025:
+### June,11, 2025: Custom Trainer and Tester
+
+Constructed using the standard syntax of `Stable Baselines3`.  
+This project adopts a train-test separation approach to facilitate parameter updates.  
+Two files were created, namely:
+
+- [mario_model_train.py](NVIDIA/mario_model_train.py)
+- [mario_model_test.py](NVIDIA/mario_model_test.py)
+
+To unify the running environment, importing the Gym Mario environment is necessary.
+
+```python
+import gym_super_mario_bros
+from gym_super_mario_bros.actions import SIMPLE_MOVEMENT
+from nes_py.wrappers import JoypadSpace
+from stable_baselines3 import PPO
+
+env = gym_super_mario_bros.make('SuperMarioBros-v0')
+env = JoypadSpace(env, SIMPLE_MOVEMENT)
+```
+
+First is the basic definition of training:
+
+```python
+model = PPO('CnnPolicy', env, verbose=1, tensorboard_log='mario_train_logs')
+model.learn(total_timesteps=100)
+model.save('mario_model')
+```
+
+Next is the basic definition of the model testing:
+
+```python
+model = PPO.load('mario_model.zip', env=env)
+
+obs = env.reset()
+for i in range(1000):
+    obs = obs.copy()
+    action, _state = model.predict(obs, deterministic=True)
+    obs, reward, done, info = env.step(action)
+    env.render()
+    if done:
+        obs = env.reset()
+```
+
+If the execution passes, then everything inside is just adding,copying, pasting, and replacing😂.  
+Replaceable parameters include PPO, CNN, total steps, and so on.  
