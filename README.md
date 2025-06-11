@@ -558,3 +558,7 @@ for i in range(1000):
 
 If the execution passes, then everything inside is just adding,copying, pasting, and replacing😂.  
 Replaceable parameters include PPO, CNN, total steps, and so on.  
+# At this point, the installation of the project is complete.
+The parameter debugging logs of the project are in another file.  
+- [PROJECTLOGS.md](PROJECTLOGS.md)
+
