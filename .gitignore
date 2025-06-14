@@ -81,4 +81,6 @@ coverage/
 
 # Model.zip
 NVIDIA/mario_model.zip
+NVIDIA/mario_model_final.zip
 Intel-ARC-SSH/mario_model_xpu.zip
+Intel-ARC-SSH/mario_model_xpu_final.zip
