@@ -7,7 +7,7 @@ env = gym_super_mario_bros.make('SuperMarioBros-v0')
 env = JoypadSpace(env, SIMPLE_MOVEMENT)
 
 model = PPO.load('mario_model.zip', env=env)
-
+#model = PPO.load('/home/lxz/Desktop/MARIO-TRAIN/Intel-ARC-SSH/mario_model_xpu_final.zip', env=env)
 obs = env.reset()
 for i in range(1000):
     obs = obs.copy()
