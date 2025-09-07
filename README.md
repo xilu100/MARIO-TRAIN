@@ -242,7 +242,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 ```
 
 ### Step 3. Configure `pip` libraries and dependencies.
-
+0. Be sure to install the VS Studio 2022 tool(Desktop C/C++).
 1. Downgrade the following packages:
    ```
    pip install setuptools==65.5.0
