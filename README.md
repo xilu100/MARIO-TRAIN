@@ -14,7 +14,8 @@ reinforcement learning modules.
 
 ## Environment-setup
 
-**Attention**:This project is only compatible with `Windows/Linux(Ubuntu 22.04 LTS)` and works with `CPU`,`NVIDIA` GPUs
+**Attention**:This project is only compatible with `Windows/Linux(Ubuntu 22.04 LTS)` and works with `CPU`,`NVIDIA` GPUs(
+RTX 50 series and later graphics cards are not supported.)
 with `CUDA`, `Intel ARC`
 series GPUs, and `Intel` integrated graphics.  
 For compatibility reasons, NVIDIA GPUs are best run on Windows.   
@@ -83,7 +84,17 @@ URL:https://www.anaconda.com/download/success
 
 #### Linux/WSL2
 
-```PASS```
+1. Click the download link/button.
+   https://repo.anaconda.com/archive/Anaconda3-2025.06-0-Linux-x86_64.sh
+2. Open any Linux `shell` you are comfortable using.
+3. Type(First, navigate to the directory where the file is located, for example: cd Desktop/):
+    ```shell
+   sh Anaconda3-2025.06-0-Linux-x86_64.sh 
+    ```
+4. Install as usual (since this is not the standard installation method like `Windows Installer` and it often
+   changes).  
+   For example: Enter -> yes -> (confirm your installation position) Enter -> Enter
+5. Proceed the same way starting from Step 6 above.
 
 ### Step 2. Configure accelerated computing frameworks / hardware acceleration platforms.
 
@@ -156,7 +167,34 @@ First, ensure that your NVIDIA GPU drivers are updated to the latest or a relati
 
 ##### Linux/WSL2
 
-```PASS```
+0. Run the installation code from the following website.  
+   https://developer.nvidia.com/cuda-11-8-0-download-archive?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=22.04&target_type=runfile_local
+1. If you’re lucky, it might install successfully in one go.
+   (The reason is to avoid installing the default v.520 driver.)  
+   However, it’s still recommended to follow the steps below for a stable installation.
+2. Stop immediately after completing this step.
+
+```shell 
+wget https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run
+```
+
+3. Use Ubuntu’s built-in driver installation.(MUST RESTART!!!!)
+
+```shell
+sudo ubuntu-drivers install
+sudo reboot 
+```
+
+4. If running `nvidia-smi` gives the same result as above(Step 1), the installation was successful. Otherwise, check the
+   installation (try searching on Google for solutions).
+5. Rerun the installation script.
+
+```shell
+sudo sh cuda_11.8.0_520.61.05_linux.run
+```
+
+6. After agreeing to the terms, uncheck the installation of the 520 driver, then proceed with the installation.
+7. Proceed roughly the same way starting from Step 6 above.
 
 #### IPEX
 
@@ -242,6 +280,7 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 ```
 
 ### Step 3. Configure `pip` libraries and dependencies.
+
 0. Be sure to install the VS Studio 2022 tool(Desktop C/C++).
 1. Downgrade the following packages:
    ```
@@ -557,8 +596,11 @@ for i in range(1000):
 ```
 
 If the execution passes, then everything inside is just adding,copying, pasting, and replacing😂.  
-Replaceable parameters include PPO, CNN, total steps, and so on.  
+Replaceable parameters include PPO, CNN, total steps, and so on.
+
 # At this point, the installation of the project is complete.
-The parameter debugging logs of the project are in another file.  
+
+The parameter debugging logs of the project are in another file.
+
 - [PROJECTLOGS.md](PROJECTLOGS.md)
 
