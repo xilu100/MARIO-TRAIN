@@ -199,8 +199,29 @@ sudo sh cuda_11.8.0_520.61.05_linux.run
 #### IPEX
 
 ##### Windows
+For example, using the Intel ARC A770 as a case.
 
-```PASS```
+1. First, download and install the driver (it’s recommended to choose the `WHQL` version to ensure stability).  
+https://www.intel.com/content/www/us/en/download/785597/865175/intel-arc-graphics-windows.html
+2. Install C++ following the official steps (see Section 2.2).  
+https://pytorch-extension.intel.com/installation?platform=gpu&version=v2.3.110%2Bxpu&os=windows&package=pip
+3. If you’ve confirmed that the C++ Desktop Development Toolkit is already installed, you can proceed directly with the installation.
+```shell
+# For Intel® Arc™ A-Series Graphics, use the commands below:
+conda install libuv
+python -m pip install torch==2.3.1.post0+cxx11.abi torchvision==0.18.1.post0+cxx11.abi torchaudio==2.3.1.post0+cxx11.abi intel-extension-for-pytorch==2.3.110.post0+xpu --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/
+```
+4. Verify whether the installation was successful.
+```shell
+python -c "import torch; import intel_extension_for_pytorch as ipex; print(torch.__version__); print(ipex.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
+```
+5. The expected output should be as follows.
+```shell
+2.3.1. post0+cxx11. abi
+2.3.110.post0+xpu
+[0]: _XpuDeviceProperties(name='Intel(R) Arc(M) A770 Graphics', platform_name='Intel(R) Level-Zero', type='gpu', driver _version='1.3.35227', total_memory=15930MB, max_compute_units=512, gpu_eu_count=512, gpu_subslice_count=64, max_work_gro up_size=1024, max_num_sub_groups=128, sub_group_sizes=[8 16 32], has_fp16=1, has_fp64=0, has_atomic64=1)
+```
+6. Congratulations, the installation was successful.
 
 ##### Linux/WSL2
 
